@@ -24,41 +24,49 @@ describe("When character is created", () => {
 describe("When character is on battle", () => {
   describe("damaging", () => {
     it("should subtract damage from health", () => {
-      const character = new Character();
+      const character1 = new Character();
 
-      character.damage(100)
+      const character2 = new Character();
 
-      expect(character.health).toBe(900)
+      character1.damage(character2, 100);
+
+      expect(character2.health).toBe(900)
     })
 
     it("should kill character if damage exceeds health", () => {
-      const character = new Character()
+      const character1 = new Character();
 
-      character.damage(1001)
+      const character2 = new Character();
 
-      expect(character.health).toBe(0)
+      character1.damage(character2, 1001);
 
-      expect(character.isAlive).toBeFalsy()
+      expect(character2.health).toBe(0)
+
+      expect(character2.isAlive).toBeFalsy()
     })
   })
 
   describe("healing", () => {
     it("should not heal dead characters", () => {
-      const character = new Character();
+      const character1 = new Character();
 
-      character.damage(1001);
-      character.heal(1)
+      const character2 = new Character();
 
-      expect(character.isAlive).toBeFalsy()
+      character1.damage(character2, 1001);
+      character1.heal(character2, 1);
+
+      expect(character2.isAlive).toBeFalsy()
     })
 
     it("should have maximium of 1000 health", () => {
-      const character = new Character();
+      const character1 = new Character();
 
-      character.damage(100);
-      character.heal(101);
+      const character2 = new Character();
 
-      expect(character.health).toBe(1000)
+      character1.damage(character2,100);
+      character1.heal(character2, 101);
+
+      expect(character2.health).toBe(1000);
     })
   })
 })

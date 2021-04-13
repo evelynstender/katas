@@ -9,20 +9,20 @@ export class Character {
     this.isAlive = true;
   }
 
-  damage(value: number) {
-    this.health -= value;
+  damage(character: Character, value: number) {
+    character.health -= value;
 
-    if(this.health < 0) {
-      this.health = 0
-      this.isAlive = false;
+    if(character.health < 0) {
+      character.health = 0
+      character.isAlive = false;
     }
   }
 
-  heal(value: number) {
-    this.health += value;
+  heal(character: Character, value: number) {
+    character.health += value;
 
-    if(this.health > 1000) {
-      this.health = 1000;
+    if(character.health > 1000) {
+      character.health = 1000;
     }
   }
 }
