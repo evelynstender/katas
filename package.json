@@ -1,0 +1,28 @@
+{
+  "name": "katas",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/evelynstender/katas.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/evelynstender/katas/issues"
+  },
+  "homepage": "https://github.com/evelynstender/katas#readme",
+  "devDependencies": {
+    "@babel/preset-typescript": "^7.13.0",
+    "@types/jest": "^26.0.22",
+    "jest": "^26.6.3",
+    "typescript": "^4.2.4"
+  },
+  "dependencies": {
+    "ts-node": "^9.1.1"
+  }
+}
