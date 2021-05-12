@@ -1,140 +1,66 @@
-import { Character } from "./index";
+import { Character } from ".";
 
-describe("When character is created", () => {
-  it("should have health 1000", () => {
-    const character = new Character("c1");
+describe("Character created", () => {
+  it("should start with 1000 health", () => {
+    const character = new Character();
 
     expect(character.health).toBe(1000);
   });
 
-  it("should have at level 1", () => {
-    const character = new Character("c1");
+  it("should start with level 1", () => {
+    const character = new Character();
 
     expect(character.level).toBe(1);
   });
 
-  it("should be alive", () => {
-    const character = new Character("c1");
+  it("should start game as alive", () => {
+    const character = new Character();
 
     expect(character.isAlive).toBeTruthy();
   });
 });
 
-describe("When character is on battle", () => {
-  describe("damaging", () => {
-    it("should subtract damage from health", () => {
-      const character1 = new Character("c1");
+describe("Characters can Deal Damage to Characters", () => {
+  it("should subtract damage from hit character", () => {
+    const character1 = new Character();
+    const character2 = new Character();
 
-      const character2 = new Character("c2");
+    character1.damage(character2, 100);
 
-      character1.damage(character2, 100);
-
-      expect(character2.health).toBe(900);
-    });
-
-    it("should kill character if damage exceeds health", () => {
-      const character1 = new Character("c1");
-
-      const character2 = new Character("c2");
-
-      character1.damage(character2, 1001);
-
-      expect(character2.health).toBe(0);
-
-      expect(character2.isAlive).toBeFalsy();
-    });
-
-    it("should not damage itself", () => {
-      const character1 = new Character("c1");
-
-      character1.damage(character1, 100);
-
-      expect(character1.health).toBe(1000);
-    });
-
-    it("should reduce damage by 50% if target is 5 or more levels above the attacker", () => {
-      const character1 = new Character("c1");
-      const character2 = new Character("c2");
-      character2.level = 6;
-
-      character1.damage(character2, 100);
-
-      expect(character2.health).toBe(950);
-    });
-
-    it("should increse damage by 50% if attacker is 5 or more levels above the target", () => {
-      const character1 = new Character("c1");
-
-      character1.level = 6;
-      const character2 = new Character("c2");
-
-      character1.damage(character2, 100);
-
-      expect(character2.health).toBe(850);
-    });
+    expect(character2.health).toBe(900);
   });
 
-  describe("healing", () => {
-    it("should not heal dead characters", () => {
-      const character1 = new Character("c1");
+  it("should kill character when damage received is above health", () => {
+    const character1 = new Character();
+    const character2 = new Character();
 
-      const character2 = new Character("c2");
+    character1.damage(character2, 1001);
 
-      character1.damage(character2, 1001);
-      character2.heal(10);
+    expect(character2.isAlive).toBeFalsy();
+  });
+});
 
-      expect(character2.isAlive).toBeFalsy();
-    });
+describe("A Character can Heal a Character", () => {
+  it("should not be able to heal a dead characters", () => {
+    const character1 = new Character();
+    const character2 = new Character();
+    const character3 = new Character();
 
-    it("should have maximium of 1000 health", () => {
-      const character1 = new Character("c1");
 
-      const character2 = new Character("c2");
+    character1.damage(character2, 1001);
+    character3.heal(character2, 100);
 
-      character1.damage(character2, 100);
-      character2.heal(101);
-
-      expect(character2.health).toBe(1000);
-    });
-
-    it("a character can only heal itself", () => {
-      const character1 = new Character("c1");
-
-      const character2 = new Character("c2");
-
-      character1.damage(character2, 100);
-      character1.heal(90);
-
-      expect(character2.health).toBe(900);
-    });
+    expect(character2.isAlive).toBeFalsy();
   });
 
-  describe("range", () => {
-    it("should have and attack max range", () => {
-      const character1 = new Character("c1");
+  it("should not raise health above 1000 when healing a character", () => {
+     const character1 = new Character();
+     const character2 = new Character();
+     const character3 = new Character();
 
-      expect(!!character1.maxRange).toBeTruthy();
-    });
+     character1.damage(character2, 100);
+     character3.heal(character2, 101);
 
-    it("should have a range of 2 meters if melee fighter", () => {
-      const character1 = new Character("c1");
-
-      expect(character1.maxRange).toBe(2);
-    });
-
-    it("should have a range of 20 meters if ranged fighter", () => {
-      const character1 = new Character("c1", "ranged");
-
-      expect(character1.maxRange).toBe(20);
-    });
-
-    it("should be in range to deal damage to target", () => {
-      const character1 = new Character("c1", "ranged");
-      const character2 = new Character("c2");
-
-      character1.damage(character2, 100);
-
-      expect(character2.health).toBe(850);
-    });
-  });
+     expect(character2.health).toBe(1000);
+  })
 });
