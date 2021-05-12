@@ -20,7 +20,7 @@ describe("Character created", () => {
   });
 });
 
-describe("Characters can Deal Damage to Characters", () => {
+describe("Character damage", () => {
   it("should subtract damage from hit character", () => {
     const character1 = new Character();
     const character2 = new Character();
@@ -38,17 +38,46 @@ describe("Characters can Deal Damage to Characters", () => {
 
     expect(character2.isAlive).toBeFalsy();
   });
+
+  it("should not be able to damage itself", () => {
+    const character1 = new Character();
+
+    character1.damage(character1, 100);
+
+    expect(character1.health).toBe(1000)
+  });
+
+  it("should reduce damage by 50% if target is 5 or more levels above attacker", () => {
+     const character1 = new Character();
+     const character2 = new Character();
+     character2.level = 6
+
+    character1.damage(character2, 100);
+
+    expect(character2.health).toBe(950);
+
+  })
+
+  it("should increase damage by 50% if attacker is 5 or more levels above target", () => {
+    const character1 = new Character();
+    character1.level = 6;
+    const character2 = new Character();
+
+
+    character1.damage(character2, 100);
+
+    expect(character2.health).toBe(850);
+  });
 });
 
-describe("A Character can Heal a Character", () => {
+describe("Character heal", () => {
   it("should not be able to heal a dead characters", () => {
     const character1 = new Character();
     const character2 = new Character();
-    const character3 = new Character();
 
 
     character1.damage(character2, 1001);
-    character3.heal(character2, 100);
+    character2.heal(100);
 
     expect(character2.isAlive).toBeFalsy();
   });
@@ -56,11 +85,27 @@ describe("A Character can Heal a Character", () => {
   it("should not raise health above 1000 when healing a character", () => {
      const character1 = new Character();
      const character2 = new Character();
-     const character3 = new Character();
 
      character1.damage(character2, 100);
-     character3.heal(character2, 101);
+     character2.heal(101);
 
      expect(character2.health).toBe(1000);
   })
+
+  it("should only be able to heal itself", () => {
+    const character1 = new Character();
+    const character2 = new Character();
+
+    character1.damage(character2, 100);
+
+    character2.heal(50);
+
+    expect(character2.health).toBe(950)
+  })
+
 });
+
+
+describe("", () => {
+
+})
