@@ -3,23 +3,29 @@ export enum FighterRange {
   RANGED = 20,
 }
 
+export type Faction = {
+  name: string;
+};
+
 export class Character {
   health: number;
   level: number;
   isAlive: boolean;
   maxRange: FighterRange;
   position: number;
+  factions: Faction[];
 
   constructor(fighterRange?: FighterRange, postion?: number) {
     this.health = 1000;
     this.level = 1;
     this.isAlive = true;
+    this.factions = [];
     this.maxRange = fighterRange || FighterRange.MELEE;
     this.position = postion || 0;
   }
 
   damage(target: Character, damage: number) {
-    if (target !== this) {
+    if (target !== this && target.characterStatus(this) !== "Ally") {
       const distance = Math.abs(this.position - target.position);
 
       if (distance > this.maxRange) {
@@ -42,13 +48,43 @@ export class Character {
     }
   }
 
-  heal(healPoints: number) {
+  heal(healPoints: number, character?: Character) {
     if (this.isAlive) {
-      this.health += healPoints;
+      if (character && character.characterStatus(this) === "Ally") {
+        character.health += healPoints;
+      } else {
+        this.health += healPoints;
+      }
 
       if (this.health > 1000) {
         this.health = 1000;
       }
     }
+  }
+
+  joinFaction(faction: Faction) {
+    this.factions.push(faction);
+  }
+
+  leaveFaction(faction: Faction) {
+    const foundFaction = this.factions.find((fact) => {
+      return fact.name === faction.name;
+    });
+
+    if (foundFaction) {
+      this.factions.splice(this.factions.indexOf(foundFaction), 1);
+    }
+  }
+
+  characterStatus(character: Character) {
+    const isAlly = this.factions.find((faction) => {
+      const characterFaction = character.factions.find((fact) => {
+        return fact.name == faction.name;
+      });
+
+      return characterFaction;
+    });
+
+    return isAlly ? "Ally" : "Enemy";
   }
 }

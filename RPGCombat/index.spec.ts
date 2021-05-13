@@ -92,6 +92,18 @@ describe("Character damage", () => {
 
     expect(character1.health).toBe(900);
   });
+
+  it("should not be able to deal damage to another ally", () => {
+    const character1 = new Character();
+    const character2 = new Character();
+
+    character1.joinFaction({ name: "Faction1" });
+    character2.joinFaction({ name: "Faction1" });
+
+    character1.damage(character2, 100);
+
+    expect(character2.health).toBe(1000);
+  });
 });
 
 describe("Character heal", () => {
@@ -122,6 +134,76 @@ describe("Character heal", () => {
     character1.damage(character2, 100);
 
     character2.heal(50);
+
+    expect(character2.health).toBe(950);
+  });
+});
+
+describe("Character factions", () => {
+  it("should have no factions if newly created", () => {
+    const character1 = new Character();
+
+    expect(character1.factions).toHaveLength(0);
+  });
+
+  it("should be able to join one faction", () => {
+    const character1 = new Character();
+
+    character1.joinFaction({ name: "Faction1" });
+
+    expect(character1.factions).toHaveLength(1);
+    expect(character1.factions[0].name).toBe("Faction1");
+  });
+
+  it("should be able to join more than one faction", () => {
+    const character1 = new Character();
+
+    character1.joinFaction({ name: "Faction1" });
+    character1.joinFaction({ name: "Faction2" });
+
+    expect(character1.factions).toHaveLength(2);
+  });
+
+  it("should be able to leave faction", () => {
+    const character1 = new Character();
+
+    character1.joinFaction({ name: "Faction1" });
+    character1.leaveFaction({ name: "Faction1" });
+    expect(character1.factions).toHaveLength(0);
+  });
+
+  it("should be considered ally if on the same faction", () => {
+    const character1 = new Character();
+    const character2 = new Character();
+
+    character1.joinFaction({ name: "Faction1" });
+    character2.joinFaction({ name: "Faction1" });
+
+    expect(character1.characterStatus(character2)).toBe("Ally");
+  });
+
+  it("should be considered enemy if on different factions", () => {
+    const character1 = new Character();
+    const character2 = new Character();
+
+    character1.joinFaction({ name: "Faction1" });
+    character2.joinFaction({ name: "Faction2" });
+
+    expect(character1.characterStatus(character2)).toBe("Enemy");
+  });
+
+  it("should be able to heal damage to another ally", () => {
+    const character1 = new Character();
+    const character2 = new Character();
+    const character3 = new Character();
+
+    character1.joinFaction({ name: "Faction1" });
+    character2.joinFaction({ name: "Faction1" });
+    character2.joinFaction({ name: "Faction2" });
+
+    character3.damage(character2, 100);
+
+    character1.heal(50, character2);
 
     expect(character2.health).toBe(950);
   });
