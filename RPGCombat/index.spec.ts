@@ -137,6 +137,23 @@ describe("Character heal", () => {
 
     expect(character2.health).toBe(950);
   });
+
+
+  it("should be able to heal to another ally", () => {
+    const character1 = new Character();
+    const character2 = new Character();
+    const character3 = new Character();
+
+    character1.joinFaction({ name: "Faction1" });
+    character2.joinFaction({ name: "Faction1" });
+    character2.joinFaction({ name: "Faction2" });
+
+    character3.damage(character2, 100);
+
+    character1.heal(150, character2);
+
+    expect(character2.health).toBe(1000);
+  });
 });
 
 describe("Character factions", () => {
@@ -192,19 +209,4 @@ describe("Character factions", () => {
     expect(character1.characterStatus(character2)).toBe("Enemy");
   });
 
-  it("should be able to heal damage to another ally", () => {
-    const character1 = new Character();
-    const character2 = new Character();
-    const character3 = new Character();
-
-    character1.joinFaction({ name: "Faction1" });
-    character2.joinFaction({ name: "Faction1" });
-    character2.joinFaction({ name: "Faction2" });
-
-    character3.damage(character2, 100);
-
-    character1.heal(50, character2);
-
-    expect(character2.health).toBe(950);
-  });
 });

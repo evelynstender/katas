@@ -50,8 +50,14 @@ export class Character {
 
   heal(healPoints: number, character?: Character) {
     if (this.isAlive) {
-      if (character && character.characterStatus(this) === "Ally") {
-        character.health += healPoints;
+      if (character) {
+        if (character.characterStatus(this) === "Ally") {
+          character.health += healPoints;
+
+          if (character.health > 1000) {
+            character.health = 1000;
+          }
+        }
       } else {
         this.health += healPoints;
       }
