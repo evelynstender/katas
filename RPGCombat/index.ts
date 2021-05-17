@@ -7,44 +7,67 @@ export type Faction = {
   name: string;
 };
 
-export class Character {
+export class Target {
   health: number;
-  level: number;
   isAlive: boolean;
+
+  constructor() {
+    this.health = 1000;
+    this.isAlive = true;
+  }
+}
+
+export class Thing extends Target {
+  constructor() {
+    super();
+  }
+}
+
+export class Character extends Target {
+  health: number;
+  isAlive: boolean;
+  level: number;
   maxRange: FighterRange;
   position: number;
   factions: Faction[];
 
   constructor(fighterRange?: FighterRange, postion?: number) {
-    this.health = 1000;
+    super();
     this.level = 1;
-    this.isAlive = true;
     this.factions = [];
     this.maxRange = fighterRange || FighterRange.MELEE;
     this.position = postion || 0;
   }
 
-  damage(target: Character, damage: number) {
-    if (target !== this && target.characterStatus(this) !== "Ally") {
-      const distance = Math.abs(this.position - target.position);
+  damage(target: Target, damage: number) {
+    if (target instanceof Thing) {
+      target.health -= damage;
+    } else {
+      const characterTarget = <Character>target;
+      if (
+        characterTarget !== this &&
+        characterTarget.characterStatus(this) !== "Ally"
+      ) {
+        const distance = Math.abs(this.position - characterTarget.position);
 
-      if (distance > this.maxRange) {
-        return;
+        if (distance > this.maxRange) {
+          return;
+        }
+
+        const levelDifference = characterTarget.level - this.level;
+
+        if (levelDifference >= 5) {
+          characterTarget.health -= damage / 2;
+        } else if (levelDifference < 0) {
+          characterTarget.health -= damage * 1.5;
+        } else {
+          characterTarget.health -= damage;
+        }
       }
+    }
 
-      const levelDifference = target.level - this.level;
-
-      if (levelDifference >= 5) {
-        target.health -= damage / 2;
-      } else if (levelDifference < 0) {
-        target.health -= damage * 1.5;
-      } else {
-        target.health -= damage;
-      }
-
-      if (target.health < 0) {
-        target.isAlive = false;
-      }
+    if (target.health < 0) {
+      target.isAlive = false;
     }
   }
 

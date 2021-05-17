@@ -1,4 +1,4 @@
-import { Character, FighterRange } from ".";
+import { Character, FighterRange, Target, Thing } from ".";
 
 describe("Character created", () => {
   it("should start with 1000 health", () => {
@@ -104,6 +104,24 @@ describe("Character damage", () => {
 
     expect(character2.health).toBe(1000);
   });
+
+  it("should be able to damage non-character things", () => {
+    const character = new Character();
+    const tree = new Thing();
+
+    character.damage(tree, 100);
+
+    expect(tree.health).toBe(900);
+  });
+
+  it("should be destroyed when health is reduced to 0", () => {
+    const character = new Character();
+    const tree = new Thing();
+
+    character.damage(tree, 1001);
+
+    expect(tree.isAlive).toBe(false);
+  });
 });
 
 describe("Character heal", () => {
@@ -137,7 +155,6 @@ describe("Character heal", () => {
 
     expect(character2.health).toBe(950);
   });
-
 
   it("should be able to heal to another ally", () => {
     const character1 = new Character();
@@ -208,5 +225,4 @@ describe("Character factions", () => {
 
     expect(character1.characterStatus(character2)).toBe("Enemy");
   });
-
 });
