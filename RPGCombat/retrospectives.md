@@ -10,3 +10,12 @@
 - Is everything tested? Are you confident in your code?
   - Everything is tested as TDD is being used. Every little requirement on each itereation is being tested.
   - Code is quite messy, but I'm confident that is matching all the requirements until now
+
+
+### Restrospective 2
+
+- What problems did you encounter?
+  - I found some issue on how to differentiate between a character and a thing, how I would structure that.
+
+- What have you learned? Any new technique or pattern?
+  I learnt more about types and how to use them, the benefits of extending a class.
