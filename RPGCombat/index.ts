@@ -89,17 +89,15 @@ export class Character extends Target {
 
   healAlly(healPoints: number, character: Character) {
     if (
-      !this.isAlive ||
-      !character.isAlive ||
-      character.characterStatus(this) !== "Ally"
+      this.isAlive &&
+      character.isAlive &&
+      character.characterStatus(this) === "Ally"
     ) {
-      return;
-    }
+      character.health += healPoints;
 
-    character.health += healPoints;
-
-    if (character.health > 1000) {
-      character.health = 1000;
+      if (character.health > 1000) {
+        character.health = 1000;
+      }
     }
   }
 
@@ -118,14 +116,11 @@ export class Character extends Target {
   }
 
   characterStatus(character: Character) {
-    const isAlly = this.factions.find((faction) => {
-      const characterFaction = character.factions.find((fact) => {
-        return fact.name == faction.name;
-      });
-
-      return characterFaction;
-    });
-
+    const isAlly = this.factions.find((faction) =>
+      character.factions.find(
+        (characterFaction) => faction.name === characterFaction.name
+      )
+    );
     return isAlly ? "Ally" : "Enemy";
   }
 }
