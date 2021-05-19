@@ -10,16 +10,18 @@ export type Faction = {
 export class Target {
   health: number;
   isAlive: boolean;
+  position: number;
 
-  constructor() {
+  constructor(position: number = 0) {
     this.health = 1000;
     this.isAlive = true;
+    this.position = position;
   }
 }
 
 export class Thing extends Target {
-  constructor() {
-    super();
+  constructor(position: number = 0) {
+    super(position);
   }
 }
 
@@ -28,66 +30,76 @@ export class Character extends Target {
   isAlive: boolean;
   level: number;
   maxRange: FighterRange;
-  position: number;
   factions: Faction[];
 
-  constructor(fighterRange?: FighterRange, postion?: number) {
-    super();
+  constructor(fighterRange?: FighterRange, position?: number) {
+    super(position);
     this.level = 1;
     this.factions = [];
     this.maxRange = fighterRange || FighterRange.MELEE;
-    this.position = postion || 0;
   }
 
-  damage(target: Target, damage: number) {
-    if (target instanceof Thing) {
-      target.health -= damage;
+  private dealDamage = (
+    target: Target,
+    damage: number,
+    levelDifference: number = 0
+  ) => {
+    if (levelDifference >= 5) {
+      target.health -= damage / 2;
+    } else if (levelDifference < 0) {
+      target.health -= damage * 1.5;
     } else {
-      const characterTarget = <Character>target;
-      if (
-        characterTarget !== this &&
-        characterTarget.characterStatus(this) !== "Ally"
-      ) {
-        const distance = Math.abs(this.position - characterTarget.position);
+      target.health -= damage;
+    }
+  };
 
-        if (distance > this.maxRange) {
-          return;
-        }
+  private canDealDamage = (target: Character, distance: number): boolean => {
+    return (
+      distance < this.maxRange &&
+      target !== this &&
+      target.characterStatus(this) !== "Ally"
+    );
+  };
 
-        const levelDifference = characterTarget.level - this.level;
+  damage(target: Target, damage: number) {
+    if (target instanceof Character) {
+      const distance = Math.abs(this.position - target.position);
+      if (this.canDealDamage(target, distance)) {
+        const levelDifference = target.level - this.level;
 
-        if (levelDifference >= 5) {
-          characterTarget.health -= damage / 2;
-        } else if (levelDifference < 0) {
-          characterTarget.health -= damage * 1.5;
-        } else {
-          characterTarget.health -= damage;
-        }
+        this.dealDamage(target, damage, levelDifference);
       }
+    } else {
+      this.dealDamage(target, damage);
     }
 
-    if (target.health < 0) {
+    if (target.health <= 0) {
       target.isAlive = false;
     }
   }
+  heal(healPoints: number) {
+    if (!this.isAlive) {
+      return;
+    }
+    this.health += healPoints;
+    if (this.health > 1000) {
+      this.health = 1000;
+    }
+  }
 
-  heal(healPoints: number, character?: Character) {
-    if (this.isAlive) {
-      if (character) {
-        if (character.characterStatus(this) === "Ally") {
-          character.health += healPoints;
+  healAlly(healPoints: number, character: Character) {
+    if (
+      !this.isAlive ||
+      !character.isAlive ||
+      character.characterStatus(this) !== "Ally"
+    ) {
+      return;
+    }
 
-          if (character.health > 1000) {
-            character.health = 1000;
-          }
-        }
-      } else {
-        this.health += healPoints;
-      }
+    character.health += healPoints;
 
-      if (this.health > 1000) {
-        this.health = 1000;
-      }
+    if (character.health > 1000) {
+      character.health = 1000;
     }
   }
 

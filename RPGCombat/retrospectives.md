@@ -18,4 +18,4 @@
   - I found some issue on how to differentiate between a character and a thing, how I would structure that.
 
 - What have you learned? Any new technique or pattern?
-  I learnt more about types and how to use them, the benefits of extending a class.
+  - I learnt more about types and how to use them, the benefits of extending a class.

@@ -167,10 +167,23 @@ describe("Character heal", () => {
 
     character3.damage(character2, 100);
 
-    character1.heal(150, character2);
+    character1.healAlly(150, character2);
 
     expect(character2.health).toBe(1000);
   });
+   it("should not be able to heal to enemy", () => {
+     const character1 = new Character();
+     const character3 = new Character();
+
+     character1.joinFaction({ name: "Faction1" });
+     character3.joinFaction({ name: "Faction2" });
+
+     character1.damage(character3, 100);
+
+     character1.healAlly(150, character3);
+
+     expect(character3.health).toBe(900);
+   });
 });
 
 describe("Character factions", () => {
